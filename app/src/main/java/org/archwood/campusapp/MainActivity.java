@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,15 +22,42 @@ import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.widget.TextView;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 public class MainActivity extends AppCompatActivity {
 
     public void today(View view){
         //download html library...again
 
+        try {
+            String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36";
+            String url = "http://www.archwood.org/feed/";
+
+            Connection.Response resp = Jsoup.connect(url).userAgent(userAgent)
+                    .method(Connection.Method.GET)
+//		            .followRedirects(true)
+                    .execute();
+
+            Document d = resp.parse();
+            String body = resp.body();
+
+            int bellIndex = body.indexOf("Bell");
+            int i = body.lastIndexOf('[', bellIndex);
+            int dayIndex = body.indexOf("Day", bellIndex);
+            String theDay = body.substring(dayIndex, dayIndex + 5);
+            String theBell = body.substring(i+1, bellIndex - 1);
+
+            Snackbar.make(view,"Good morning, Wood!  Today is " +
+                    theBell + " Bell, " + theDay, Snackbar.LENGTH_LONG)
+                    .show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
-        Snackbar.make(view,"I don't know yet", Snackbar.LENGTH_LONG)
-                .show();
     }
 
 
@@ -70,8 +98,34 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                try {
+                    String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36";
+                    String url = "http://www.archwood.org/feed/";
+
+                    Connection.Response resp = Jsoup.connect(url).userAgent(userAgent)
+                            .method(Connection.Method.GET)
+		            .followRedirects(true)
+                            .execute();
+                    Log.w("Got this far","after execute");
+                    Document d = resp.parse();
+                    String body = resp.body();
+
+                    int bellIndex = body.indexOf("Bell");
+                    int i = body.lastIndexOf('[', bellIndex);
+                    int dayIndex = body.indexOf("Day", bellIndex);
+                    String theDay = body.substring(dayIndex, dayIndex + 5);
+                    String theBell = body.substring(i+1, bellIndex - 1);
+
+                    Snackbar.make(view,"Good morning, Wood!  Today is " +
+                            theBell + " Bell, " + theDay, Snackbar.LENGTH_LONG)
+                            .show();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+               // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                 //       .setAction("Action", null).show();
             }
         });
 
