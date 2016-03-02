@@ -28,37 +28,42 @@ import org.jsoup.nodes.Document;
 
 public class MainActivity extends AppCompatActivity {
 
-    public void today(View view){
-        //download html library...again
 
-        try {
-            String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36";
-            String url = "http://www.archwood.org/feed/";
+       public static void today(View view){
+           try {
+               String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36";
+               String url = "http://www.archwood.org/feed/";
 
-            Connection.Response resp = Jsoup.connect(url).userAgent(userAgent)
-                    .method(Connection.Method.GET)
+               Connection.Response resp = Jsoup.connect(url).userAgent(userAgent)
+                       .method(Connection.Method.GET)
 //		            .followRedirects(true)
-                    .execute();
+                       .execute();
 
-            Document d = resp.parse();
-            String body = resp.body();
+               Document d = resp.parse();
+               String body = resp.body();
 
-            int bellIndex = body.indexOf("Bell");
-            int i = body.lastIndexOf('[', bellIndex);
-            int dayIndex = body.indexOf("Day", bellIndex);
-            String theDay = body.substring(dayIndex, dayIndex + 5);
-            String theBell = body.substring(i+1, bellIndex - 1);
+               int bellIndex = body.indexOf("Bell");
+               int i = body.lastIndexOf('[', bellIndex);
+               int dayIndex = body.indexOf("Day", bellIndex);
+               String theDay = body.substring(dayIndex, dayIndex + 5);
 
-            Snackbar.make(view,"Good morning, Wood!  Today is " +
-                    theBell + " Bell, " + theDay, Snackbar.LENGTH_LONG)
-                    .show();
+               String theBell = body.substring(i+1, bellIndex - 1);
+               Snackbar.make(view, "Good morning, Wood!  Today is " +
+                       theBell + " Bell, " + theDay, Snackbar.LENGTH_LONG)
+                       .show();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+           }catch (Exception e) {
+               e.printStackTrace();
+           }
+       }
+       
 
 
-    }
+
+
+
+
+
 
 
     /**
